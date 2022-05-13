@@ -1,3 +1,4 @@
+from crypt import methods
 from threading import local
 from flask import Flask, render_template, request, session, redirect, url_for
 from flask_mysqldb import MySQL
@@ -35,7 +36,7 @@ def index():
         return render_template('index.html')
 
 
-@app.route('/new')
+@app.route('/register')
 def register():
     return render_template('register.html')
 
@@ -44,7 +45,7 @@ def citas():
     if session['usuario'] is not None:
         dni = session['usuario']
         cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute("SELECT * FROM cita JOIN paciente ON cita.paciente = paciente.id  WHERE paciente.dni=%s",(dni,))
+        cursor.execute("SELECT CONCAT(medico.nombre, ' ', medico.apellidos) AS medico, cita.fecha, consulta.nombre AS consulta, CONCAT(paciente.nombre, ' ', paciente.apellidos) as paciente FROM cita JOIN medico ON cita.medico = medico.id JOIN consulta ON medico.consulta = consulta.id JOIN paciente ON cita.paciente=paciente.id WHERE paciente.dni=%s",(dni,))
         info = cursor.fetchall()
         return render_template('citas.html', data=info)
     else:
@@ -64,7 +65,7 @@ def new():
     localidad = request.form['localidad']
     
     cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute("SELECT * FROM paciente WHERE dni='{{dni}}'")
+    cursor.execute("SELECT * FROM paciente WHERE dni=%s",(dni,))
             
     info = cursor.fetchone()
     if info is None:
@@ -75,6 +76,13 @@ def new():
     else:
         return "ya se encuentra registrado un usuario con dni: "+dni
 
+@app.route('/crear-cita')
+def crear_cita():
+    cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("SELECT * FROM medico")
+    info = cursor.fetchall()
+
+    return render_template("crear-cita.html", data=info)
 
 if __name__ == '__main__':
     app.run(debug=True)
