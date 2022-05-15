@@ -14,9 +14,9 @@
     <nav class="navbar bg-primary">
         <div class="container-fluid">
             <span class="navbar-text">
-              Bienvenido/a: {{data[0].paciente}}
+              Bienvenido/a: {{usuario}}
             </span>
-            <a href="/nueva" class="btn btn-success me-2" type="button">Nueva cita</a>
+            <a href="/nueva-cita" class="btn btn-success me-2" type="button">Nueva cita</a>
             <a href="/logout" class="btn btn-sm btn-secondary">Cerrar sesión</a>
         </div>
     </nav>
@@ -28,13 +28,21 @@
                 <th>Fecha</th>
                 <th>Medico</th>
                 <th>Consulta</th>
-            {% for cita in data %}
-            <tr>
-                <td>{{ cita.fecha }}</td>
-                <td>{{ cita.medico }}</td>
-                <td>{{ cita.consulta }}</td>
-            </tr>
-            {% endfor %}
+            {% if data is defined %}
+                {% for cita in data %}
+                <tr>
+                    <td>{{ cita.fecha }}</td>
+                    <td>{{ cita.medico }}</td>
+                    <td>{{ cita.consulta }}</td>
+                    <td>
+                        <form action="/eliminar-cita" method="post">
+                            <input type="hidden" name="id" value="{{cita.id}}">
+                            <input type="submit" class="btn btn-danger" value="Cancelar">
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            {% endif%}
             </table>
         </div>
     </div>
