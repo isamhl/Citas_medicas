@@ -7,16 +7,15 @@
         <!-- Bootstrap CSS -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-        <title>Citas</title>
+        <title>Citas para hoy</title>
     </head>
 </html>
 <body>
     <nav class="navbar bg-primary">
         <div class="container-fluid">
             <span class="navbar-text">
-              Bienvenido/a: {{usuario}}
+              Bienvenido/a dr/a: {{usuario}}, aqui tiene sus citas de hoy
             </span>
-            <a href="/nueva-cita" class="btn btn-success me-2" type="button">Nueva cita</a>
             <a href="/logout" class="btn btn-sm btn-secondary">Cerrar sesión</a>
         </div>
     </nav>
@@ -27,21 +26,15 @@
             <table class="table table-hover">
                 <th>Fecha</th>
                 <th>Hora</th>
-                <th>Medico</th>
+                <th>paciente</th>
                 <th>Consulta</th>
             {% if data is defined %}
                 {% for cita in data %}
                 <tr>
                     <td>{{ cita.fecha }}</td>
-                    <td>{{cita.hora}}-{{cita.hora+1}}</td>
-                    <td>{{ cita.medico }}</td>
+                    <td>{{ cita.hora }} - {{cita.hora+1}}</td>
+                    <td>{{ cita.paciente }}</td>
                     <td>{{ cita.consulta }}</td>
-                    <td>
-                        <form action="/eliminar-cita" method="post">
-                            <input type="hidden" name="id" value="{{cita.id}}">
-                            <input type="submit" class="btn btn-danger" value="Cancelar">
-                        </form>
-                    </td>
                 </tr>
                 {% endfor %}
             {% endif%}

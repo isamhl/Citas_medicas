@@ -1,0 +1,53 @@
+
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/inicio.css') }}">
+        <title>Bienvenido</title>
+    </head>
+</html>
+<body>
+    <nav class="navbar bg-primary">
+        <div class="container-fluid">
+            <span class="navbar-text">
+              Bienvenido a clinica la sabina
+            </span>
+            <a href="/login" class="btn btn-success me-2" type="button">login</a>
+        </div>
+    </nav>
+    <br>
+    <br>
+    <div class="row">
+        <div class="inicio col-md-8 offset-md-2 row">
+            <img class="col-md-6" src="{{url_for('static', filename='imagenes/sabina.jpg')}}">
+            <div class="col-md-6 texto">
+
+                <p>La clínica "La Sabina" le da la bienvenida a su página para pedir cita.</p>
+                <p>Somos una clínica privada que consta de los mejores profesionales a las especialidades que ofrece. El rasgo que más caracteriza a esta clínica es la rapidez y precisión en sus diagnósticos clínicos.</p>
+
+                <p>Las especialidades con las que contamos son:</p>
+                <ul>
+                    {% for especialidad in data %}
+                        <li>{{especialidad.especialidad}}</li> 
+                    {% endfor %}
+                </ul>
+
+                <p>Con previsión de ampliar en algunos campos como en la medicina estética.</p>
+
+                <p>La Sabina ofrece, aparte de la profesionalidad de nuestros especialistas un excelente trato humano. Nuestros especialistas e instalaciones están preparadas para ofrecerle el mejor trato posible y las condiciones más óptimas de espera ante urgencias o citas, ademas
+                contamos con la tecnología más puntera de la actualidad, para añadirle un extra de precisión a nuestros diagnósticos.</p>
+
+                <p>Reserva tu cita y compruébalo tú mismo.</p>
+
+                <p>Nos encontramos en Calle Águila, 16, 04825, Chirivel, Almería.</p>
+
+                <p>Llámanos al 950 41 33 687</p>
+            </div>  
+        </div>
+    </div>
+</body>

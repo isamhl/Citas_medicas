@@ -1,3 +1,4 @@
+from asyncio.windows_events import NULL
 from flask import Flask, render_template, request, session, redirect, url_for
 from flask_mysqldb import MySQL
 import MySQLdb, json
@@ -13,6 +14,14 @@ app.config["MYSQL_DB"] = "clinica"
 db = MySQL(app)
 
 @app.route('/', methods=['GET', 'POST'])
+def inicio():
+    cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("SELECT DISTINCT(especialidad) FROM medico")
+    especialidades = cursor.fetchall()
+    
+    return render_template("inicio.html", data=especialidades)
+
+@app.route('/login', methods=['GET', 'POST'])
 def index():
 
     if request.method == 'POST':
@@ -31,7 +40,26 @@ def index():
         else:
             return "falta información para el acceso"
     else:
-        return render_template('index.html')
+        return render_template('login.html')
+
+@app.route('/medico-login', methods=['GET', 'POST'])
+def medico_login():
+
+    if 'usuario' in request.form and 'password' in request.form:
+        usuario = request.form['usuario']
+        password = request.form['password']
+        cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute("SELECT * FROM medico WHERE usuario=LOWER(%s) AND password=%s",(usuario,password))
+        info = cursor.fetchone()
+        if info is not None:
+            if info['usuario'] == usuario.lower() and info["password"] == password:
+                session['medico'] = usuario
+                return redirect(url_for('citas_medico'))
+        else:
+            return "No existe ningun medico con dicho usuario o contraseña"
+    else:
+        return "falta información para el acceso"
+
 
 
 @app.route('/register')
@@ -43,7 +71,7 @@ def citas():
     if session['usuario'] is not None:
         dni = session['usuario']
         cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute("SELECT CONCAT(medico.nombre, ' ', medico.apellidos) AS medico, cita.fecha, consulta.nombre AS consulta, CONCAT(paciente.nombre, ' ', paciente.apellidos) as paciente, cita.id as id FROM cita JOIN medico ON cita.medico = medico.id JOIN consulta ON medico.consulta = consulta.id JOIN paciente ON cita.paciente=paciente.id WHERE paciente.dni=%s",(dni,))
+        cursor.execute("SELECT CONCAT(medico.nombre, ' ', medico.apellidos) AS medico, cita.fecha, consulta.nombre AS consulta, CONCAT(paciente.nombre, ' ', paciente.apellidos) as paciente, cita.id as id, cita.hora as hora FROM cita JOIN medico ON cita.medico = medico.id JOIN consulta ON medico.consulta = consulta.id JOIN paciente ON cita.paciente=paciente.id WHERE paciente.dni=%s and cita.fecha >= CURDATE() ORDER BY cita.fecha ASC, cita.hora ASC",(dni,))
         info = cursor.fetchall()
         cursor.execute("SELECT CONCAT(paciente.nombre, ' ', paciente.apellidos) as paciente FROM paciente WHERE paciente.dni=%s",(dni,))
         nombre = cursor.fetchone()
@@ -52,7 +80,7 @@ def citas():
         else:
             return render_template('citas.html', usuario=nombre['paciente'])
     else:
-        return render_template('index.html')
+        return render_template('login.html')
 
 @app.route('/logout')
 def logout():
@@ -75,7 +103,7 @@ def new():
         consulta = "insert into paciente (dni, nombre, apellidos, localidad, password) values (UPPER(%s), %s, %s, %s, %s)"
         cursor.execute(consulta,(dni,nombre,apellidos,localidad,password))
         db.connection.commit()
-        return render_template('index.html')
+        return render_template('login.html')
     else:
         return "ya se encuentra registrado un usuario con dni: "+dni
 
@@ -94,11 +122,12 @@ def guardar_cita():
     
     medico = request.form['medico']
     fecha = request.form['fecha']
+    hora = request.form['hora']
     cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute("SELECT id FROM paciente WHERE dni=%s",(session['usuario'],))
     usuario = cursor.fetchone()
     
-    cursor.execute("INSERT INTO cita (paciente, medico, fecha) values (%s, %s, %s)",(usuario['id'],medico,fecha))
+    cursor.execute("INSERT INTO cita (paciente, medico, fecha, hora) values (%s, %s, %s, %s)",(usuario['id'],medico,fecha,hora))
     db.connection.commit()
     return redirect(url_for('citas'))
 
@@ -110,6 +139,38 @@ def eliminar_cita():
     db.connection.commit()
 
     return redirect(url_for('citas'))
+
+@app.route('/citas-medico')
+def citas_medico():
+    if session['medico'] is not None:
+        usuario = session['medico']
+        cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute("SELECT CONCAT(paciente.nombre, ' ', paciente.apellidos) as paciente, cita.fecha as fecha, consulta.nombre as consulta, cita.hora as hora from paciente join cita on cita.paciente = paciente.id join medico on cita.medico = medico.id join consulta on medico.consulta = consulta.id WHERE medico.usuario=%s AND cita.fecha = CURDATE() ORDER BY cita.fecha ASC, cita.hora ASC",(usuario,))
+        info = cursor.fetchall()
+        cursor.execute("SELECT CONCAT(medico.nombre, ' ', medico.apellidos) as medico FROM medico WHERE medico.usuario=%s",(usuario,))
+        nombre = cursor.fetchone()
+        if len(info) > 0:
+            return render_template('citas-medico.html', data=info, usuario=nombre['medico'])
+        else:
+            return render_template('citas-medico.html', usuario=nombre['medico'])
+    else:
+        return render_template('login.html')
+
+@app.route('/horas',methods=['POST'])
+def horas():
+    usuario = session["usuario"]
+    medico = request.form['medico']
+    fecha = request.form['fecha']
+
+    cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("SELECT hora FROM cita WHERE cita.medico = %s AND cita.fecha = %s UNION SELECT hora FROM cita JOIN paciente ON cita.paciente = paciente.id WHERE paciente.dni = %s AND cita.fecha = %s",(medico, fecha, usuario, fecha))
+    horas = cursor.fetchall()
+    if len(horas) > 0:
+        return json.dumps(horas)
+    else:
+        return "0"
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

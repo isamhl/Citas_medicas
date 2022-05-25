@@ -29,11 +29,7 @@
         <div class="bg-primary col-lg-4 offset-lg-4 col-md-6 offset-md-3 cita">
             <form method="post" action="/guardar-cita">
                 <div class="form-group">
-                    <label for="fecha">Fecha:</label><br>
-                    <input name="fecha" type="date" class="form-control"  required><br>
-                </div>
-                <div class="form-group">
-                    <label for="especialidad">Medico:</label><br>
+                    <label for="especialidad">Especialidad:</label><br>
                     <select id="especialidad" name="especialidad" class="form-select">
                         {% for especialidad in especialidades %}
                         <option value="{{ especialidad.especialidad }}">{{ especialidad.especialidad }}</option>
@@ -48,9 +44,17 @@
                         {% endfor %}
                   </select><br>
                 </div>
-                <input type="submit" class="btn btn-success" value="Pedir cita">
+                <div class="form-group">
+                    <label for="fecha">Fecha:</label><br>
+                    <input id="fecha" name="fecha" type="date" class="form-control"  required><br>
+                </div>
+                <div id="div-hora" class="form-group">
+                    <label for="hora">Hora:</label><br>
+                    <select name="hora" id="hora" class="form-control"  required disabled="true"></select><br>
+                </div>
+                <div class="errorhoras alert alert-danger">Ya tiene citas asignadas para todas las horas del dia, cambie de dia</div>
+                <input id="enviar" type="submit" class="btn btn-success" value="Pedir cita">
             </form>
-            <form action></form>
         </div>
     </div>
 </body>
