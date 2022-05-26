@@ -14,9 +14,10 @@
 <body>
     <nav class="navbar bg-primary">
         <div class="container-fluid">
-            <span class="navbar-text">
+            <img src="{{url_for('static', filename='imagenes/logo.png')}}" width="80" height="80" alt="">
+            <h3 class="navbar-text">
               Clinica la sabina
-            </span>
+            </h3>
             <button class="btn btn-secondary" onclick="history.back()">volver al login</button>
         </div>
     </nav>
@@ -42,6 +43,14 @@
                 <div class="form-group">
                     <label for="localidad">Localidad:</label><br>
                     <input name="localidad" type="text" class="form-control" placeholder="Localidad" required><br>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label><br>
+                    <input name="email" type="text" class="form-control" placeholder="Email" required><br>
+                </div>
+                <div class="form-group">
+                    <label for="telefono">Telefono:</label><br>
+                    <input name="telefono" type="tel" pattern="[0-9]{9}" class="form-control" placeholder="Telefono" required><br>
                 </div>
                 <input type="submit" class="btn btn-success" value="Registrar">
             </form>

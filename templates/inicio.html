@@ -14,9 +14,10 @@
 <body>
     <nav class="navbar bg-primary">
         <div class="container-fluid">
-            <span class="navbar-text">
-              Bienvenido a clinica la sabina
-            </span>
+            <img src="{{url_for('static', filename='imagenes/logo.png')}}" width="80" height="80" alt="">
+            <h3 class="navbar-text">
+              Bienvenido a clínica La Sabina
+            </h3>
             <a href="/login" class="btn btn-success me-2" type="button">login</a>
         </div>
     </nav>
@@ -24,10 +25,13 @@
     <br>
     <div class="row">
         <div class="inicio col-md-8 offset-md-2 row">
-            <img class="col-md-6" src="{{url_for('static', filename='imagenes/sabina.jpg')}}">
-            <div class="col-md-6 texto">
+            <div class="col-md-6 offset-md-3">
+                <img style="width: 100%; height: auto;" src="{{url_for('static', filename='imagenes/sabina.jpg')}}">
+            </div>
+            
+            <div class="col-md-12 texto">
 
-                <p>La clínica "La Sabina" le da la bienvenida a su página para pedir cita.</p>
+                <h1>La clínica "La Sabina" le da la bienvenida a su página para pedir cita.</h1><br>
                 <p>Somos una clínica privada que consta de los mejores profesionales a las especialidades que ofrece. El rasgo que más caracteriza a esta clínica es la rapidez y precisión en sus diagnósticos clínicos.</p>
 
                 <p>Las especialidades con las que contamos son:</p>

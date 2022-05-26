@@ -13,9 +13,10 @@
 <body>
     <nav class="navbar bg-primary">
         <div class="container-fluid">
-            <span class="navbar-text">
+            <img src="{{url_for('static', filename='imagenes/logo.png')}}" width="80" height="80" alt="">
+            <h3 class="navbar-text">
               Bienvenido/a: {{usuario}}
-            </span>
+            </h3>
             <a href="/nueva-cita" class="btn btn-success me-2" type="button">Nueva cita</a>
             <a href="/logout" class="btn btn-sm btn-secondary">Cerrar sesión</a>
         </div>

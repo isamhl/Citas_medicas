@@ -13,9 +13,10 @@
 <body>
     <nav class="navbar bg-primary">
         <div class="container-fluid">
-            <span class="navbar-text">
+            <img src="{{url_for('static', filename='imagenes/logo.png')}}" width="80" height="80" alt="">
+            <h3 class="navbar-text">
               Bienvenido/a dr/a: {{usuario}}, aqui tiene sus citas de hoy
-            </span>
+            </h3>
             <a href="/logout" class="btn btn-sm btn-secondary">Cerrar sesión</a>
         </div>
     </nav>

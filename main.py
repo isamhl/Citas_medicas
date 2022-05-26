@@ -94,14 +94,16 @@ def new():
     nombre = request.form['nombre']
     apellidos = request.form['apellidos']
     localidad = request.form['localidad']
+    email = request.form['email']
+    telefono = request.form['telefono']
     
     cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute("SELECT * FROM paciente WHERE dni=%s",(dni,))
             
     info = cursor.fetchone()
     if info is None:
-        consulta = "insert into paciente (dni, nombre, apellidos, localidad, password) values (UPPER(%s), %s, %s, %s, %s)"
-        cursor.execute(consulta,(dni,nombre,apellidos,localidad,password))
+        consulta = "insert into paciente (dni, nombre, apellidos, localidad, password, email, telefono) values (UPPER(%s), %s, %s, %s, %s, %s, %s)"
+        cursor.execute(consulta,(dni,nombre,apellidos,localidad,password, email, telefono))
         db.connection.commit()
         return render_template('login.html')
     else:
@@ -145,7 +147,7 @@ def citas_medico():
     if session['medico'] is not None:
         usuario = session['medico']
         cursor = db.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute("SELECT CONCAT(paciente.nombre, ' ', paciente.apellidos) as paciente, cita.fecha as fecha, consulta.nombre as consulta, cita.hora as hora from paciente join cita on cita.paciente = paciente.id join medico on cita.medico = medico.id join consulta on medico.consulta = consulta.id WHERE medico.usuario=%s AND cita.fecha = CURDATE() ORDER BY cita.fecha ASC, cita.hora ASC",(usuario,))
+        cursor.execute("SELECT CONCAT(paciente.nombre, ' ', paciente.apellidos) as paciente, cita.fecha as fecha, consulta.nombre as consulta, cita.hora as hora, paciente.email as email, paciente.telefono as telefono  from paciente join cita on cita.paciente = paciente.id join medico on cita.medico = medico.id join consulta on medico.consulta = consulta.id WHERE medico.usuario=%s AND cita.fecha = CURDATE() ORDER BY cita.fecha ASC, cita.hora ASC",(usuario,))
         info = cursor.fetchall()
         cursor.execute("SELECT CONCAT(medico.nombre, ' ', medico.apellidos) as medico FROM medico WHERE medico.usuario=%s",(usuario,))
         nombre = cursor.fetchone()
