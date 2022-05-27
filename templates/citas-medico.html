@@ -27,7 +27,9 @@
             <table class="table table-hover">
                 <th>Fecha</th>
                 <th>Hora</th>
-                <th>paciente</th>
+                <th>Paciente</th>
+                <th>Email</th>
+                <th>Telefono</th>
                 <th>Consulta</th>
             {% if data is defined %}
                 {% for cita in data %}
@@ -35,6 +37,8 @@
                     <td>{{ cita.fecha }}</td>
                     <td>{{ cita.hora }} - {{cita.hora+1}}</td>
                     <td>{{ cita.paciente }}</td>
+                    <td>{{ cita.email }}</td>
+                    <td>{{ cita.telefono }}</td>
                     <td>{{ cita.consulta }}</td>
                 </tr>
                 {% endfor %}
